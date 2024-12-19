@@ -19,14 +19,28 @@
 </div>
 <?php
 
-// Check if image file is a actual image or fake image
 if(isset($_POST["submit"])) {
-	$target_dir = "uploads/";
-	$target_file = $target_dir . basename($_FILES["file"]["name"]);
-	
-    move_uploaded_file($_FILES["file"]["tmp_name"], $target_file);
-    echo "File uploaded /uploads/".$_FILES["file"]["name"];
+    $target_dir = "uploads/";
+    $target_file = $target_dir . uniqid() . '-' . basename($_FILES["file"]["name"]);
+    
+    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+    $allowed_types = ['jpg', 'jpeg', 'png', 'gif'];
+
+    if (!in_array($imageFileType, $allowed_types)) {
+        echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+    } else {
+        if (getimagesize($_FILES["file"]["tmp_name"]) === false) {
+            echo "Sorry, the file is not a valid image.";
+        } else {
+            if (move_uploaded_file($_FILES["file"]["tmp_name"], $target_file)) {
+                echo "File uploaded successfully: " . htmlspecialchars($target_file);
+            } else {
+                echo "Sorry, there was an error uploading your file.";
+            }
+        }
+    }
 }
 ?>
 </body>
 </html>
+
