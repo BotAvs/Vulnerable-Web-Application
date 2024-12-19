@@ -54,7 +54,7 @@
 			} else {
         		echo "0 results";
 			}
-			$stmt->close(); // Cerrar la declaración
+			$stmt->close(); 
 		} else {
 			echo "Invalid input. Only letters and spaces are allowed.";
 		}
