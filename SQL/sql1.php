@@ -6,13 +6,13 @@
 </head>
 <body>
 
-	 <div style="background-color:#c9c9c9;padding:15px;">
+	<div style="background-color:#c9c9c9;padding:15px;">
       <button type="button" name="homeButton" onclick="location.href='../homepage.html';">Home Page</button>
       <button type="button" name="mainButton" onclick="location.href='sqlmainpage.html';">Main Page</button>
 	</div>
 
 	<div align="center">
-	<form action="<?php $_SERVER['PHP_SELF']; ?>" method="post" >
+	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" >
 		<p>John -> Doe</p>
 		First name : <input type="text" name="firstname">
 		<input type="submit" name="submit" value="Submit">
@@ -26,31 +26,43 @@
 	$password = "";
 	$db = "1ccb8097d0e9ce9f154608be60224c7c";
 
-	// Create connection
-	$conn = mysqli_connect($servername,$username,$password,$db);
+	
+	$conn = mysqli_connect($servername, $username, $password, $db);
 
-	// Check connection
 	if (!$conn) {
     	die("Connection failed: " . mysqli_connect_error());
 	} 
-	//echo "Connected successfully";
 	
-	if(isset($_POST["submit"])){
+	if(isset($_POST["submit"])) {
 		$firstname = $_POST["firstname"];
-		$sql = "SELECT lastname FROM users WHERE firstname='$firstname'";//String
-		$result = mysqli_query($conn,$sql);
+
 		
-		if (mysqli_num_rows($result) > 0) {
-        // output data of each row
-    		while($row = mysqli_fetch_assoc($result)) {
-       			echo $row["lastname"];
-       			echo "<br>";
-    		}
+		if (!empty($firstname) && preg_match("/^[a-zA-Z ]*$/", $firstname)) {
+			
+			$stmt = $conn->prepare("SELECT lastname FROM users WHERE firstname=?");
+			$stmt->bind_param("s", $firstname);
+
+			$stmt->execute();
+			$result = $stmt->get_result();
+
+			if (mysqli_num_rows($result) > 0) {
+        		
+				while($row = mysqli_fetch_assoc($result)) {
+        			echo htmlspecialchars($row["lastname"]);
+        			echo "<br>";
+				}
+			} else {
+        		echo "0 results";
+			}
+			$stmt->close(); // Cerrar la declaración
 		} else {
-    		echo "0 results";
+			echo "Invalid input. Only letters and spaces are allowed.";
 		}
 	}
-	
- ?>
+
+
+	mysqli_close($conn);
+?>
 </body>
 </html>
+
