@@ -20,12 +20,21 @@
 
 <?php 
 if (isset($_GET["username"])) {
-    // Usamos htmlspecialchars para escapar los caracteres especiales
-    $user = htmlspecialchars($_GET["username"], ENT_QUOTES, 'UTF-8');
-    echo "Your name is " . $user;
+
+    $user = trim($_GET["username"]); 
+
+
+    if (preg_match("/^[a-zA-Z0-9\s]+$/", $user)) {
+      
+        $user = htmlspecialchars($user, ENT_QUOTES, 'UTF-8');
+        echo "Your name is " . $user;
+    } else {
+        echo "Invalid input detected!";
+    }
 }
  ?>
 
 </body>
 </html>
+
 
