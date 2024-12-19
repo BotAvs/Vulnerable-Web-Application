@@ -20,15 +20,16 @@
 	</div>
 
 <?php
+
 	$servername = "localhost";
-	$username = "root";
-	$password = ""; // Usa contraseñas seguras para tu base de datos
+	$username = getenv('DB_USERNAME'); 
+	$password = getenv('DB_PASSWORD'); 
 	$db = "1ccb8097d0e9ce9f154608be60224c7c";
 
-	// Create connection
+
 	$conn = new mysqli($servername, $username, $password, $db);
 
-	// Check connection
+
 	if ($conn->connect_error) {
 	    die("Connection failed: " . $conn->connect_error);
 	} 
@@ -36,9 +37,9 @@
 	if(isset($_POST["submit"])) {
 		$number = $_POST['number'];
 
-		// Usar consultas preparadas para evitar SQL Injection
+		
 		$stmt = $conn->prepare("SELECT bookname, authorname FROM books WHERE number = ?");
-		$stmt->bind_param("i", $number); // "i" es para integer (número entero)
+		$stmt->bind_param("i", $number);
 		$stmt->execute();
 		$result = $stmt->get_result();
 
@@ -51,11 +52,12 @@
 			echo "0 results";
 		}
 
-		$stmt->close(); // Cerrar la declaración
+		$stmt->close(); 
 	}
 
-	$conn->close(); // Cerrar la conexión
+	$conn->close(); 
 ?> 
 
 </body>
 </html>
+
