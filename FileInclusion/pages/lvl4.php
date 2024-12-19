@@ -14,27 +14,26 @@
       
       <div align="center"><b><h3>This is Level 4</h3></b></div>
       <div align="center">
-      <a href=lvl4.php?file=1.php><button>Button</button></a>
-      <a href=lvl4.php?file=2.php><button>The Other Button!</button></a>
+      <a href="lvl4.php?file=1.php"><button>Button</button></a>
+      <a href="lvl4.php?file=2.php"><button>The Other Button!</button></a>
       </div>
       
       <?php     
         echo "</br></br>";
 
-        if (isset( $_GET[ 'file' ])) 
-        {
-          $secure4 = $_GET[ 'file' ];
-         
-            if ($secure4!="1.php" && $secure4!="2.php") 
-            {
-              $secure4=substr($secure4, 0,-4);
-            }
-            
-            if (isset($secure4)) 
-            {        
-              include($secure4);              
-            }
-        }              
+        if (isset($_GET['file'])) {
+          $file = basename($_GET['file']);  // Obtener solo el nombre del archivo sin rutas
+
+          // Lista blanca de archivos permitidos
+          $allowed_files = ['1.php', '2.php'];
+
+          if (in_array($file, $allowed_files)) {
+            include($file);
+            echo "<div align='center'><b><h5>" . htmlspecialchars($file) . "</h5></b></div>";  
+          } else {
+            echo "<div align='center'><b><h5>Invalid file!</h5></b></div>";
+          }
+        }
       ?>
    </body>
 </html>
