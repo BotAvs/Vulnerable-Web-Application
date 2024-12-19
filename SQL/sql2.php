@@ -12,9 +12,9 @@
 	</div>
 
 	<div align="center">
-	<form action="<?php $_SERVER['PHP_SELF']; ?>" method="post" >
+	<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post" >
 		<p>Give me book's number and I give you book's name in my library.</p>
-		Book's number : <input type="text" name="number">
+		Book's number : <input type="text" name="number" required>
 		<input type="submit" name="submit" value="Submit">
 	</form>
 	</div>
@@ -22,37 +22,39 @@
 <?php
 	$servername = "localhost";
 	$username = "root";
-	$password = "";
+	$password = ""; // Usa contraseñas seguras para tu base de datos
 	$db = "1ccb8097d0e9ce9f154608be60224c7c";
 
 	// Create connection
-	$conn = new mysqli($servername, $username, $password,$db);
+	$conn = new mysqli($servername, $username, $password, $db);
 
 	// Check connection
 	if ($conn->connect_error) {
 	    die("Connection failed: " . $conn->connect_error);
 	} 
-	//echo "Connected successfully";
-	if(isset($_POST["submit"])){
+
+	if(isset($_POST["submit"])) {
 		$number = $_POST['number'];
-		$query = "SELECT bookname,authorname FROM books WHERE number = $number"; //Int
-		$result = mysqli_query($conn,$query);
 
-		if (!$result) { //Check result
-		    $message  = 'Invalid query: ' . mysql_error() . "\n";
-		    $message .= 'Whole query: ' . $query;
-		    die($message);
+		// Usar consultas preparadas para evitar SQL Injection
+		$stmt = $conn->prepare("SELECT bookname, authorname FROM books WHERE number = ?");
+		$stmt->bind_param("i", $number); // "i" es para integer (número entero)
+		$stmt->execute();
+		$result = $stmt->get_result();
+
+		if ($result->num_rows > 0) {
+			while ($row = $result->fetch_assoc()) {
+				echo "<hr>";
+				echo htmlspecialchars($row['bookname']) . " ----> " . htmlspecialchars($row['authorname']);    
+			}
+		} else {
+			echo "0 results";
 		}
 
-		while ($row = mysqli_fetch_assoc($result)) {
-			echo "<hr>";
-		    echo $row['bookname']." ----> ".$row['authorname'];    
-		}
-
-		if(mysqli_num_rows($result) <= 0)
-			echo "0 result";
+		$stmt->close(); // Cerrar la declaración
 	}
 
+	$conn->close(); // Cerrar la conexión
 ?> 
 
 </body>
