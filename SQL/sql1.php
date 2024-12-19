@@ -12,7 +12,7 @@
 	</div>
 
 	<div align="center">
-	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" >
+	<form action="process_form.php" method="post">
 		<p>John -> Doe</p>
 		First name : <input type="text" name="firstname">
 		<input type="submit" name="submit" value="Submit">
